@@ -21,7 +21,7 @@ Inclui suporte a **Swagger**, **OpenAPI**, e rotas com `GET`, `POST`,
 1.  Clone o repositório:
 
     ``` bash
-    git clone <url-do-repo>
+    git clone <https://github.com/fabriciossilvad/MinimalAPI.git>
     ```
 
 2.  Navegue até a pasta do projeto:
