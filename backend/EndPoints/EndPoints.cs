@@ -1,33 +1,17 @@
-using System.Reflection.Metadata.Ecma335;
 
-var builder = WebApplication.CreateBuilder(args);
+using MinimalAPI.Models;
+using MinimalAPI.DTOs;
+using MinimalAPI.Services;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-
+namespace MinimalAPI.EndPoints;
 
 /*
 ------------GETS----------------
 */
 
-app.MapGet("/produtos", () =>
+app.MapGet("/produtos", ( ProdutoServices ProdutoServices) =>
 {
-    return Produtos;
+    return ProdutoServices.GetTodosProdutos();
 });
 
 app.MapGet("/produtos/{id:int}", (int id) =>
@@ -96,6 +80,3 @@ app.MapPatch(("/produtos/{id:int}"), (int id, ProdutoPatchDto dto) =>
     }
     return Results.NotFound($"Produto de id {id} não está cadastrado ainda");
 });
-
-
-app.Run();
