@@ -1,0 +1,46 @@
+# ===========================
+# .NET / C# Minimal API
+# ===========================
+
+# Build folders
+bin/
+obj/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Visual Studio
+.vs/
+
+# Logs
+*.log
+logs/
+
+# User-specific files
+*.user
+*.suo
+
+# Environment variables
+.env
+*.env
+
+# ASP.NET Configuration
+appsettings.Development.json
+appsettings.Local.json
+
+# Compiled output
+*.dll
+*.exe
+*.pdb
+
+# Publish output
+publish/
+out/
+
+# OS files
+Thumbs.db
+*.DS_Store
+
+# JetBrains Rider
+.idea/
