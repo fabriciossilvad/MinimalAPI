@@ -5,78 +5,65 @@ using MinimalAPI.Services;
 
 namespace MinimalAPI.EndPoints;
 
-/*
-------------GETS----------------
-*/
-
-app.MapGet("/produtos", ( ProdutoServices ProdutoServices) =>
+public static class ProdutoEndPoints
 {
-    return ProdutoServices.GetTodosProdutos();
-});
+  public static void MapProdutosEndPoints( this WebApplication app)
+  {
+    /*
+    ------------GETS----------------
+    */
 
-app.MapGet("/produtos/{id:int}", (int id) =>
-{
-    var produto = Produtos.FirstOrDefault(p => p.Id == id);
-    
-    return produto != null
-    ? Results.Ok(produto)
-    : Results.NotFound("Produto não encontrado");
-});
-
-app.MapGet("/produtos/{nome}", (String nome) =>
-{
-    var produto = Produtos.Where(x => x.Nome.Contains(nome, StringComparison.OrdinalIgnoreCase)).ToList();
-
-    return produto != null 
-    ? Results.Ok(produto)
-    : Results.NotFound("Produto não encontrado");
-});
-
-
-/*
--------------POSTS----------------
-*/
-
-
-app.MapPost("/produtos", (Produto novoProduto) =>
-{
-    if (Produtos.Any(p => p.Id == novoProduto.Id))
-        return Results.BadRequest("Produto com esse ID já existe");
-    
-    Produtos.Add(novoProduto);
-
-    return Results.Created($"/produto/{novoProduto.Id}", novoProduto);
-});
-
-/*
--------------PUTS----------------
-*/
-
-app.MapPut(("/produtos/{id:int}"), (int id, Produto produtoAtualizado) =>
-{
-    var prod = Produtos.FirstOrDefault(p => p.Id == id);
-    if (prod is null)
+    app.MapGet("/produtos", ( ProdutoServices ps) =>
     {
-        return Results.NotFound($"Produto de id {id} não está cadastrado ainda.");
-    }
-    prod.Nome = produtoAtualizado.Nome;
-    prod.Preco = produtoAtualizado.Preco;
+        return ps.GetTodosProdutos();
+    });
 
-    return Results.Ok(prod);
-});
-
-/*
--------------PATCH----------------
-*/
-
-app.MapPatch(("/produtos/{id:int}"), (int id, ProdutoPatchDto dto) =>
-{
-    var prod = Produtos.FirstOrDefault(p => p.Id == id);
-    if (prod is not null)
+    app.MapGet("/produtos/{id:int}", (int id, ProdutoServices ps) =>
     {
-        prod.Nome = dto.Nome ?? prod.Nome;
-        prod.Preco = dto.Preco ?? prod.Preco;
-        return Results.Ok(prod);
-    }
-    return Results.NotFound($"Produto de id {id} não está cadastrado ainda");
-});
+        var produto = ps.BuscarId(id);
+        return produto != null
+        ? Results.Ok(produto)
+        : Results.NotFound("Produto não encontrado");
+    });
+
+    app.MapGet("/produtos/{nome}", (String nome, ProdutoServices ps) =>
+    {
+        var produto = ps.BuscarNome(nome);
+        return produto != null 
+        ? Results.Ok(produto)
+        : Results.NotFound("Produto não encontrado");
+    });
+
+
+    /*
+    -------------POSTS----------------
+    */
+
+
+    app.MapPost("/produtos", (Produto novoProduto, ProdutoServices ps) =>
+    {
+        var produtoCriado = ps.CriarProduto(novoProduto);
+        return produtoCriado is not null
+        ? Results.Created($"/produto/{novoProduto.Id}", novoProduto)
+        : Results.BadRequest($"Produto com esse Id já existe!");
+    });
+
+    /*
+    -------------PUTS----------------
+    */
+
+    app.MapPut(("/produtos/{id:int}"), (int id, Produto produtoAtualizado, ProdutoServices ps) =>
+    {
+        var p = ps.PutProduto(id, produtoAtualizado);
+        return p is not null
+        ? Results.Ok(p)
+        : Results.NotFound($"Produto não encontrado!");
+    });
+
+    /*
+    -------------PATCH----------------
+    */
+
+    
+  }
+}

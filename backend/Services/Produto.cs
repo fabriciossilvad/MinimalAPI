@@ -1,3 +1,4 @@
+using MinimalAPI.DTOs;
 using MinimalAPI.Models;
 namespace MinimalAPI.Services;
 
@@ -17,8 +18,28 @@ public class ProdutoServices
 
     public List<Produto> ? BuscarNome (string nome ) => ListarProdutos.Where(p => p.Nome.Contains(nome, StringComparison.OrdinalIgnoreCase)).ToList();
     public Produto ? CriarProduto (Produto p){
+      var produto = ListarProdutos.FirstOrDefault(x=> x.Id == p.Id);
+
+      //Verifica a disponibilidade do Id antes de criar um novo produto, para não ter duplicatas.
+      if (produto != null)
+      {
+        return null;
+      }
+      
       ListarProdutos.Add(p); 
       return p;
+            
     } 
 
+    public Produto ? PutProduto (int id, Produto produtoAtualizado){
+      var produto = ListarProdutos.FirstOrDefault(p => p.Id == id);
+      if(produto is not null){
+        produto.Nome = produtoAtualizado.Nome;
+        produto.Preco = produtoAtualizado.Preco;
+        return produto;
+      }
+      return null;
+    }
+
+    
 }
